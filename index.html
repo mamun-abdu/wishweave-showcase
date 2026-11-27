@@ -195,18 +195,21 @@ function nextStep(words){
 function copyCanvas(){
  if(!lastCanvas)return;
  const text=`${lastCanvas.title}\n\nProblem: ${lastCanvas.idea}\nWho it helps: ${lastCanvas.audience}\nPossible solution: ${lastCanvas.solution}\nNext small step: ${lastCanvas.next}\nTags: ${lastCanvas.tags.map(x=>"#"+x).join(" ")}`;
- navigator.clipboard?.writeText(text);
- alert("Build canvas copied.");
+ if(!navigator.clipboard){alert("Copying isn't available in this browser. Select the canvas text and copy it by hand.");return}
+ navigator.clipboard.writeText(text).then(()=>alert("Build canvas copied."),()=>alert("Couldn't copy. Select the canvas text and copy it by hand."));
 }
 function saveIdea(){
  if(!lastCanvas)return;
- const arr=JSON.parse(localStorage.getItem("wishweave")||"[]");
+ const arr=loadSaved();
  arr.unshift({...lastCanvas,saved:new Date().toLocaleString()});
  localStorage.setItem("wishweave",JSON.stringify(arr.slice(0,6)));
  renderSaved(); alert("Saved in this browser.");
 }
+function loadSaved(){
+ try{const arr=JSON.parse(localStorage.getItem("wishweave")||"[]");return Array.isArray(arr)?arr:[]}catch(e){return []}
+}
 function renderSaved(){
- const arr=JSON.parse(localStorage.getItem("wishweave")||"[]"), el=document.getElementById("savedList");
+ const arr=loadSaved(), el=document.getElementById("savedList");
  if(!arr.length){el.className="empty";el.textContent="Nothing saved yet.";return}
  el.className="";
  el.innerHTML=arr.map((x,i)=>`<div class="related-item"><span class="match">${esc(x.saved)}</span><h3>${esc(x.title)}</h3><p>${esc(x.idea)}</p></div>`).join("");
