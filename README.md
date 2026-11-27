@@ -1,47 +1,53 @@
-# WishWeave — Idea to Build Canvas
+# WishWeave: idea to build canvas
 
-WishWeave is a small, browser-based creative app inspired by a simple problem I ran into while using a community wishlist: a good idea can look new simply because related ideas are hard to find.
+**Live demo:** [mamun-abdu.github.io/wishweave-showcase](https://mamun-abdu.github.io/wishweave-showcase/)
+
+WishWeave is a small browser app that turns a rough idea into a short build canvas and shows related ideas next to it. It came from a problem I ran into on a community wishlist: an idea can look new simply because similar ones are hard to find.
+
+It is one HTML file. No account, no build step, no external API.
 
 ## What it does
 
-- Lets a builder write a rough idea without polishing it first.
-- Turns the idea into a small build canvas: problem, audience, possible solution, and next step.
-- Generates lightweight tags from the text.
-- Compares the idea with a small demo library and surfaces related concepts.
-- Saves drafts locally in the browser.
-- Requires no account and no external API.
+- You write a rough idea, with an optional title. It doesn't need to be polished.
+- It fills in a build canvas: the problem, who it helps, a possible solution, and a next small step.
+- It pulls a few tags out of your text.
+- It compares your idea with a small built-in library of example ideas and shows the three closest, with a percentage overlap.
+- You can copy the canvas as plain text or save up to six drafts in your browser (`localStorage`).
 
-The matching is intentionally simple and transparent. It is not pretending to be an AI search engine; the point is to make the workflow useful first.
+## How the matching works
 
-## AWS deployment
+On purpose, it's simple and easy to check. It is not an AI search engine.
 
-This project is a static web app and can be hosted with **AWS Amplify Hosting**.
+1. The text is lowercased and split into words. Short words and common filler words are dropped.
+2. Overlap with each example idea is the number of shared words divided by the number of distinct words in both (Jaccard similarity), shown as a percentage.
+3. The "who it helps" and "next step" lines come from a few keyword rules (for example, words like `aws` or `cloud` point to cloud builders).
+4. The meter at the top of the canvas only reflects how many distinct keywords you wrote. It is not a quality score.
 
-1. Put `index.html` in a public GitHub repository.
-2. Open the AWS Amplify console.
-3. Choose **New app → Host web app → GitHub**.
-4. Authorize the AWS Amplify GitHub App and select this repository.
-5. Keep the default build settings for a static site if Amplify presents them, then choose **Save and deploy**.
-6. Open the generated `amplifyapp.com` URL and test the app.
+## Run it locally
 
-## Architecture
+Download or clone the repo and open `index.html` in any modern browser.
 
-User → WishWeave static web app → browser localStorage
+```bash
+git clone https://github.com/mamun-abdu/wishweave-showcase.git
+cd wishweave-showcase
+```
 
-AWS layer:
+Then double-click `index.html`, or serve the folder with `python3 -m http.server` and visit `http://localhost:8000`.
 
-GitHub repository → AWS Amplify Hosting → deployed HTTPS web app
+## Hosting
 
-The app deliberately keeps the prototype small. Amplify Hosting is the AWS service used for deployment and delivery.
+The live demo runs on GitHub Pages. Because it's a single static file, any static host works too. The original challenge write-up described hosting it on AWS Amplify Hosting:
 
-## Challenge connection
+1. In the AWS Amplify console, choose **New app → Host web app → GitHub**.
+2. Authorize the AWS Amplify GitHub App and pick this repository.
+3. Keep the default static-site settings and choose **Save and deploy**.
 
-The concept is inspired by my AWS Builder Center Wishlist idea, "Show Related Wishes Before I Post." The showcase version turns that idea into a working interactive prototype instead of leaving it as a wish.
+## Background
 
-## Local run
+The concept started as my AWS Builder Center wishlist idea, "Show Related Wishes Before I Post." This showcase turns that wish into a working prototype for the Weekend Showcase Challenge.
 
-No build step is required. Open `index.html` in a browser.
+This is an independent community project. It is not an AWS product.
 
-## Notes
+## License
 
-This is an independent community project and is not an AWS product.
+MIT. See [LICENSE](LICENSE).
